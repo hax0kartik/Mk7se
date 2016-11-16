@@ -145,7 +145,7 @@ int main()
 	
 }       
        
-		make_b(file,filez);
+		//make_b(file,filez);
 	/*  
 	ret=fsInit();
 	uint8_t mediatype=0x01;
