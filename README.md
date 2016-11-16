@@ -5,11 +5,11 @@ Edit your mk7 saves right from your 3ds!
 
 STEPS:-
 
-STEP 1)Export your saves using FBI to a folder named mk7se on the root of your sd card.
+STEP 1)Open FBI.Slect titles.Select "MARIO KART 7" and copy the systemX files to a folder named mk7se on the root of your sd card one by one(there must be two where X is a number between 0-9)
 
 STEP 2)Edit your saves
 
-STEP 3)Import your saves back using FBI again(don't use any save editor because mario kart some times changes the file name.)
+STEP 3)Copy your saves back from the folder to the title using FBI(don't use any save editor because mario kart some times changes the file name.)
 
 STEP 4)PROFIT!!
 
