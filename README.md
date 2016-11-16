@@ -21,4 +21,4 @@ When you enter a value which is less than 15 ,the value becomes much greater tha
 
 -------
 
-I won't be responsible if you get banned or save game corrupts.Always make backups before editing.
+I won't be responsible if you get banned or your save game corrupts.Always make backups before editing.
