@@ -5,7 +5,7 @@ Edit your mk7 saves right from your 3ds!
 
 STEPS:-
 
-STEP 1)Open FBI.Slect titles.Select "MARIO KART 7" and copy the systemX files to a folder named mk7se on the root of your sd card one by one(there must be two where X is a number between 0-9)
+STEP 1)Open FBI.Slect titles.Select "MARIO KART 7" and copy the systemX files to a folder named mk7se(create it using ctrxplorer) on the root of your sd card one by one(there must be two where X is a number between 0-9)
 
 STEP 2)Edit your saves
 
