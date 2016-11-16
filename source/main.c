@@ -27,52 +27,58 @@
 	return ret;
 }*/
 
-/* CRC-32, eg. ethernet */
 
-void make_b(char fg[],char g[])
- {       char af[]="/mk7se/backup";
-         char ad[400];
-		 puts("going to make a backup");
-		 char *ah=rfds(fg);
-		 char *gh=rfds(g);
-		 puts("File read successful");
-        if(!(mkdir(af , 0777)))
-			printf("backup path made with success\n");
-        else 
-			printf("fail");
-	    time_t unixTime = time(NULL);
+void make_b(char *fg,int b)
+ {       
+         FILE *fp1, *fp2;
+         char ch;
+         char az[1024];
+		 printf("%d",b);
+		 int pos;
+		 if(!(mkdir("/mk7se/backup", 0777)))
+		 {
+			 puts("backup folder created");
+		 }
+		time_t unixTime = time(NULL);
 		struct tm* timeStruct = gmtime((const time_t *)&unixTime);
-        char az[20];
+
 		int hours = timeStruct->tm_hour;
 		int minutes = timeStruct->tm_min;
         int day = timeStruct->tm_mday;
-		printf("/%i_%02i_%02i\n",day,hours, minutes);
-        sprintf(az,"/%i_%02i_%02i",day,hours, minutes);
-		puts(az);
-		strcat(af,az);
-		printf("path 1: %s\n",af);
-		puts(af);
-	    memmove (fg, fg+6, 11);
-		memmove (g,g+6,11);
-		 
-		 puts(fg);
-		 puts(g);
-		if(!(mkdir(af , 0777)))
-			printf("backup path2 created\n");
-		  
-	    strcpy(ad,af);
-		printf("ad:%s\n",ad);
-		strcat(ad,(const char*)fg);
-		puts(ad);
-		strcat(af,(const char*)g);
-		puts(af);
-		FILE *f = fopen(af, "wb+");
-           fwrite(ah, 1, strlen(ah), f);
-           fclose(f);
-        f = fopen(ad, "wb+");
-           fwrite(ah, 1, strlen(ah), f);
-           fclose(f);
+		
+       char ag[20];
+       sprintf(az,"/mk7se/backup/%i_%02i_%02i",day,hours, minutes);
+         if(!(mkdir(az, 0777)))
+		 {
+			 puts("backup folder created");
+		 }
+    sprintf(ag,"/system%d.dat",b);
+    strcat(az,ag);
+
+    fp1 = fopen(fg, "rb");
+    fp2 = fopen(az, "wb+");
+  
+    fseek(fp1, 0, SEEK_END); // file pointer at end of file
+
+    pos = ftell(fp1);
+
+    fseek(fp1, 0, SEEK_SET); // file pointer set at start
+
+    while (pos--)
+
+    {
+
+        ch = fgetc(fp1);  // copying file character by character
+
+        fputc(ch, fp2);
+
+    }    
+
+   printf("File copied Successfully!");
+   fclose(fp1);
+   fclose(fp2);
 }
+
 
 
 void draw(int curent, char *menu[], int N,PrintConsole *top,PrintConsole*bottom) {
