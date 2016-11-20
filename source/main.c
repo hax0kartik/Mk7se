@@ -56,6 +56,11 @@ void make_b(char *fg,int b)
     strcat(az,ag);
 
     fp1 = fopen(fg, "rb");
+	if(fp1=NULL)
+	{
+		printf("Are you sure you have exported your saves using fbi?\n");
+         }
+		       
     fp2 = fopen(az, "wb+");
   
     fseek(fp1, 0, SEEK_END); // file pointer at end of file
