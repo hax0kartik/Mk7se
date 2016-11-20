@@ -1,5 +1,5 @@
 # Mk7se
-Edit your mk7 saves right from your 3ds!
+Edit your mk7 saves right from your 3ds! https://github.com/pirater12/mk7se/releases/latest
 
 -------- 
 
