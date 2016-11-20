@@ -3,32 +3,9 @@
 #define POLYNOMIAL 0xD8  /* 11011 followed by 0's */
 #include <time.h>
 
+/* CRC-32, eg. ethernet */
 
-/*Result trySave(FS_Archive *out, u64 id) {
-	bool ret = false;
-	u32 path[3] = {MEDIATYPE_GAME_CARD, id, id >> 32};
-	Result res = FSUSER_OpenArchive(out, ARCHIVE_USER_SAVEDATA, (FS_Path){PATH_BINARY, 0xC, path});
-	if (res) {
-		//Try SD
-		Result res=0;
-		u32 path[3] = {MEDIATYPE_SD, id, id >> 32};
-		res = FSUSER_OpenArchive(out, ARCHIVE_USER_SAVEDATA, (FS_Path){PATH_BINARY, 0xC, path});
-		if (res)
-			ret = 1;
-		else
-			ret = 0;
-		return ret;
-	}*/
-	
-	/*
-	else
-		ret = true;
-
-	return ret;
-}*/
-
-
-void make_b(char *fg,int b)
+Result make_b(char *fg,int b)
  {       
          FILE *fp1, *fp2;
          char ch;
@@ -56,11 +33,11 @@ void make_b(char *fg,int b)
     strcat(az,ag);
 
     fp1 = fopen(fg, "rb");
-	if(fp1=NULL)
+	if(fp1==NULL)
 	{
-		printf("Are you sure you have exported your saves using fbi?\n");
-         }
-		       
+		printf("\nAre you sure you have exported your saves using fbi and put them in a folder named mk7se on the root of your sd card?\n\nFor steps open:- https://github.com/Pirater12/Mk7se/blob/master/README.md\n\nMk7se will soon support direct save import and export\n\nPress start to exit");
+        return 1;
+		}
     fp2 = fopen(az, "wb+");
   
     fseek(fp1, 0, SEEK_END); // file pointer at end of file
@@ -82,6 +59,7 @@ void make_b(char *fg,int b)
    printf("File copied Successfully!");
    fclose(fp1);
    fclose(fp2);
+   return 0;
 }
 
 
@@ -131,7 +109,7 @@ int main()
 		consoleSelect(&bottom);
 		printf("Searching for game saves..");    
     //const u64 titles[3] = {0x0004000000030600, 0x0004000000030700,0x0004000000030800};	//japan,europe,US
-	const u64 id=0x0004000000030700;
+	u64 id=0x0004000000030700;
 	u8* buf=malloc(sizeof(u8*));
     u64 bSize = 0;
 	FS_Archive saveArch;
@@ -140,7 +118,8 @@ int main()
 	char*sys="/mk7se/system0.dat";
 	char filez[100];
 	char file[100];
-	for(int x=0;x<10;x++)
+	int x=0;
+	for(x=0;x<10;x++)
 	{   //printf("%d\n",x);
        // printf("%c\n",sys[28]);
 		sprintf(file, "/mk7se/system%d.dat",x);
@@ -154,47 +133,25 @@ int main()
 			break;
 		}
 	
-}       
-       
-		//make_b(file,filez);
-	/*  
-	ret=fsInit();
-	uint8_t mediatype=0x01;
-	FS_Archive *out=malloc(sizeof(FS_Archive*));
-	u32 path[3] = {MEDIATYPE_SD ,mediatype, id>>32};
-		res = FSUSER_OpenArchive(out, ARCHIVE_USER_SAVEDATA, (FS_Path){PATH_BINARY, 0xC, path});
-       if(res < 0)
-{
-    printf("Error or not found: %08X\n", res);
-}
-     else
-{
-    puts("Okay");
-}
- u32 path2[3] = {MEDIATYPE_SD ,1, id>>32};
-		res = FSUSER_OpenArchive(out, ARCHIVE_USER_SAVEDATA, (FS_Path){PATH_BINARY, 0xC, path2});
-       if(res < 0)
-{
-    printf("Error or not found: %08X\n", res);
-}
-     else
-{
-    puts("Okay");
-}
-u32 path3[3] = {MEDIATYPE_SD, 2, id>>32};
-		res = FSUSER_OpenArchive(out, ARCHIVE_USER_SAVEDATA, (FS_Path){PATH_BINARY, 0xC, path3});
-       if(res < 0)
-{
-    printf("Error or not found: %08X\n", res);
-}
-     else
-{
-    puts("Okay");
-}
-	  */
-     //fsExit();
-			//free (buf);
-			//free(out);
+}    
+        puts("Going to make backup");
+		ret=make_b(file,--x);
+		if(ret==1)
+		{
+			while(aptMainLoop())
+			{ 
+				hidScanInput();
+                u32 kDown = hidKeysDown();
+				if(kDown & KEY_START)
+					break;
+			
+			}
+		gfxExit();
+		return 0;
+		}
+		ret=make_b(filez,++x);
+	    
+		
 	draw(curent,menu,entry,&top,&bottom);
     while (aptMainLoop()) {
         gspWaitForVBlank();
