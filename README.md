@@ -1,3 +1,4 @@
+[Github downloads](https://img.shields.io/github/downloads/pirater12/mk7se/total.svg)
 # Mk7se
 Edit your mk7 saves right from your 3ds! https://github.com/pirater12/mk7se/releases/latest
 
