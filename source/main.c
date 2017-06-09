@@ -5,7 +5,7 @@
 #include <3ds.h>
 #include <sf2d.h>
 #include <sftd.h>
-#include "FreeSans_ttf.h"
+#include "font_ttf.h"
 ///////////////////////////////////////////////////
 bool runThread = true;
 Result ret;
@@ -60,10 +60,10 @@ Result save_import(char *data, u64 id, char *loc){
 void guithread(void * arg)
 {	
 	sf2d_init();
-	sf2d_set_clear_color(RGBA8(0x00,0x70, 0x7f, 0xFF));
+	sf2d_set_clear_color(RGBA8(0x00,0xB5, 0xB5, 0xFF));
 	sf2d_set_vblank_wait(0);
 	sftd_init();
-	gui.font = sftd_load_font_mem(FreeSans_ttf, FreeSans_ttf_size);
+	gui.font = sftd_load_font_mem(font_ttf, font_ttf_size);
 	while(runThread)
 	{	
 		sf2d_start_frame(GFX_TOP, GFX_LEFT);
@@ -93,16 +93,22 @@ void topreg(void){
 		if(i == gui.menu.selected)
 		{
 			if(gui.menu.options == 3)
-				sftd_draw_textf(gui.font, 120, 25*i, RGBA8(0xf9,0xf9,0xf9,255), 20, "%s",menu2[i]);
+				{
+					sftd_draw_textf(gui.font,(400-(strlen(menu2[i])*11))/2, 25*i, RGBA8(0xf2,0x32,0x32,0xf0), 20, "%s",menu2[i]);
+					sf2d_draw_rectangle(1, 25*i-1, 400, 25, RGBA8(0xff,0x12,0x56,0x6f));
+				}	
 			else
-				sftd_draw_textf(gui.font, 120, 25*i, RGBA8(0xf9,0xf9,0xf9,255), 20, "%s",opt_menu[i]);
+				{
+					sftd_draw_textf(gui.font,(400-(strlen(opt_menu[i])*11))/2, 25*i, RGBA8(0xf2,0x32,0x32,0xf0), 20, "%s",opt_menu[i]);
+					sf2d_draw_rectangle(1, 25*i-1, 400, 25, RGBA8(0xff,0x5f,0xdf,0x6f));
+				}
 		}
 		else
 		{
 			if(gui.menu.options == 3)
-				sftd_draw_textf(gui.font, 120, 25*i, RGBA8(0xf4,0x46,0x47,255), 20, "%s",menu2[i]);
+				sftd_draw_textf(gui.font,(400-(strlen(menu2[i])*11))/2, 25*i, RGBA8(0xf0,0xf0,0xf0,0xff), 20, "%s",menu2[i]);
 			else
-				sftd_draw_textf(gui.font, 120, 25*i, RGBA8(0xf4,0x46,0x47,255), 20, "%s",opt_menu[i]);
+				sftd_draw_textf(gui.font,(400-(strlen(opt_menu[i])*11))/2, 25*i, RGBA8(0xf0,0xf0,0xf0,0xff), 20, "%s",opt_menu[i]);
 		}		
 	}
 }

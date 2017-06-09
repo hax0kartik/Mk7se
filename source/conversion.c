@@ -42,7 +42,6 @@ char* iha(int a){
 			
 			c=dtohex(a);
 			int j=0;
-			puts(c);
 			sscanf(c,"%X",&jm);
 			if(a>15)
 			jk=swap_uint32(jm);
