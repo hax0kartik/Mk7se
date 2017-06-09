@@ -7,8 +7,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stddef.h>
-#include <stdbool.h>
-#include <errno.h>
+#include <sf2d.h>
+#include <sftd.h>
+#include <font_ttf.h>
 #include <unistd.h>
 #include <sys/stat.h>
 #include <sys/types.h>
@@ -21,5 +22,25 @@
 #include "conversion.h"
 #include "crc.h"
 #include "fs.h"
-extern char loca[1024];
+#include "guithread.h"
+
+Result ret;
+char *data, *data2, *file;
+typedef struct
+{
+	int selected;
+	int options;
+}Menu;
+
+typedef void (*guiFunc)(void);
+
+typedef struct 
+{
+	guiFunc topFunc;
+	guiFunc botFunc;
+	sftd_font *font;
+	Menu menu;
+}Gui;
+
+Gui gui;
 #endif
