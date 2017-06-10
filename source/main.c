@@ -1,4 +1,5 @@
 #include "libs.h"
+char message[40];
 char *menu2[] = {"Europe","America","Japan"};
 char *opt_menu[]= {"Edit no of coins","Edit no of wins","Edit no of lose","Edit VR","Unlock all tracks","Unlock all chars",
 	"Unlock all Karts","Unlock all tires","Unlock all gliders"};
@@ -8,6 +9,9 @@ void botreg(void){
 }
 void botreg2(void){
 	sftd_draw_textf(gui.font, 10, 10, RGBA8(0xf9,0xf9,0xf9,255), 20, "%s", "Please select an option...");
+	sftd_draw_textf(gui.font, 10, 40, RGBA8(0xf9,0xf9,0xf9,255), 20, "%s", "Please start to save and Exit.");
+	sftd_draw_textf(gui.font, 10, 70, RGBA8(0xf9,0xf9,0xf9,255), 20, "%s", "Please select to Exit without saving.");
+	
 }
 void topreg(void){
 	for(int i=0; i!=gui.menu.options; i++){
@@ -16,12 +20,12 @@ void topreg(void){
 			if(gui.menu.options == 3)
 				{
 					sftd_draw_textf(gui.font,(400-(strlen(menu2[i])*11))/2, 25*i, RGBA8(0xf2,0x32,0x32,0xf0), 20, "%s",menu2[i]);
-					sf2d_draw_rectangle(1, 25*i-1, 400, 25, RGBA8(0xff,0x12,0x56,0x6f));
+					sf2d_draw_rectangle(0, 25*i-1, 400, 25, RGBA8(0xff,0x12,0x56,0x6f));
 				}	
 			else
 				{
 					sftd_draw_textf(gui.font,(400-(strlen(opt_menu[i])*11))/2, 25*i, RGBA8(0xf2,0x32,0x32,0xf0), 20, "%s",opt_menu[i]);
-					sf2d_draw_rectangle(1, 25*i-1, 400, 25, RGBA8(0xff,0x5f,0xdf,0x6f));
+					sf2d_draw_rectangle(0, 25*i-1, 400, 25, RGBA8(0xff,0x5f,0xdf,0x6f));
 				}
 		}
 		else
@@ -51,6 +55,7 @@ void topFail(void)
 void botFail(void)
 {
 	sftd_draw_textf(gui.font,120, 90, RGBA8(0xf4,0x46,0x47,250),15,"%s","Press Start to Exit");
+	
 }
 ////////////////////////////////////////////////////
 void HandleHIDRegion(int selected)
@@ -94,7 +99,119 @@ void HandleHIDRegion(int selected)
 	}
 	free(file);
 }
-
+////////////////////////////////////////////////////////
+char mybuf[100];
+unsigned int openSwkdb(SwkbdState *swkbd,char *texgen)
+{
+	SwkbdButton button = SWKBD_BUTTON_NONE;
+	//gui.topFunc = topFail;
+	
+	swkbdInit(swkbd, SWKBD_TYPE_NUMPAD, 2, -1);
+	//gui.topFunc = topFail;
+	button = swkbdInputText(swkbd, mybuf, sizeof(mybuf));
+	int w=atoi(mybuf);
+	return w;
+}
+void botDisplay(void)
+{
+	sftd_draw_textf(gui.font, 10, 10, RGBA8(0xf9,0xf9,0xf9,255), 20, "%s", message);
+}
+//////////////////////////////////////////////////////////
+void HandleHIDOptions(int selected)
+{
+	unsigned int opt = 0;
+	SwkbdState swkbd;
+	
+	switch(selected)
+	{
+		case 0:
+		svcCreateEvent(&event,RESET_STICKY);
+		opt = openSwkdb(&swkbd,"Enter no of coins");
+		svcSignalEvent(event);
+		//svcClearEvent(event);
+		patchByte(data,opt,COIN);
+		patchByte(data2,opt,COIN);
+		strcpy(message, "Number of coins changed!");
+		gui.botFunc = botDisplay;
+		break;
+		case 1:
+		svcCreateEvent(&event,RESET_STICKY);
+		opt = openSwkdb(&swkbd,"Enter no of wins");
+		svcSignalEvent(event);
+		patchByte(data,opt,WIN);
+		patchByte(data2,opt,WIN);
+		strcpy(message, "Number of wins changed!");
+		gui.botFunc = botDisplay;
+		break;
+		
+		case 2:
+		svcCreateEvent(&event,RESET_STICKY);
+		opt = openSwkdb(&swkbd,"Enter no of Losses");
+		svcSignalEvent(event);
+		patchByte(data,opt,LOSE);
+		patchByte(data2,opt,LOSE);
+		strcpy(message, "Number of losses changed!");
+		gui.botFunc = botDisplay;
+		break;
+		
+		case 3:
+		svcCreateEvent(&event,RESET_STICKY);
+		opt = openSwkdb(&swkbd,"Enter the new VR");
+		svcSignalEvent(event);
+		patchByte(data, opt, VR);
+		patchByte(data2, opt, VR);
+		strcpy(message, "VR changed!");
+		gui.botFunc = botDisplay;
+		break;
+		
+		case 4:
+		patchByte(data, 63, TRACK);
+		patchByte(data2, 63, TRACK);
+		strcpy(message, "All tracks unlocked!");
+		gui.botFunc = botDisplay;
+		break;
+		
+		case 5:
+		patchByte(data, 255, CHAR);
+		patchByte(data, 1, CHAR+1);
+		patchByte(data, 255, CHAR+2);
+		patchByte(data, 1, CHAR+3);
+		patchByte(data2, 255, CHAR);
+		patchByte(data2, 1, CHAR+1);
+		patchByte(data2, 255, CHAR+2);
+		patchByte(data2, 1, CHAR+3);
+		strcpy(message, "All characters unlocked");
+		gui.botFunc = botDisplay;
+		break;
+		
+		case 6:
+		patchByte(data, 255, KART);
+		patchByte(data, 63, KART+1);
+		patchByte(data2, 255, KART);
+		patchByte(data2, 63, KART+1);
+		strcpy(message, "All karts unlocked!");
+		gui.botFunc = botDisplay;
+		break;
+		
+		case 7:
+		patchByte(data, 127, TIRE);
+		patchByte(data2, 127, TIRE);
+		strcpy(message, "All tires unlocked!");
+		gui.botFunc = botDisplay;
+		break;
+		
+		case 8:
+		patchByte(data, 63, GLIDER);
+		patchByte(data2, 63, GLIDER);
+		strcpy(message, "All gliders unlocked!");
+		gui.botFunc = botDisplay;
+		break;
+	}
+	cal_save(data);
+	cal_save(data2);
+	//patchByte(data, crc, 20688);
+	//patchByte(data2, crc2, 20688);
+}
 //////////////////////////////////////////////////
 int main()
 {	
@@ -106,11 +223,11 @@ int main()
 	data = malloc(20692);
 	data2 = malloc(20692);
 	fsInit();
-	Thread thread = threadCreate(guithread,NULL,(8*1024),0x24,-2,true);
+	thread = threadCreate(guithread,NULL,(8*1024),0x24,-2,true);
 	while (aptMainLoop()) {
 		gspWaitForVBlank();
 		hidScanInput();
-		if (hidKeysDown() & KEY_START) break;
+		if (hidKeysDown() & KEY_START)	break;
 		if (hidKeysDown() & KEY_DDOWN)
 		{
 			gui.menu.selected++;
@@ -129,13 +246,17 @@ int main()
 		}
 		if (hidKeysDown() & KEY_A)
 		{
-			HandleHIDRegion(gui.menu.selected);
+			if(gui.menu.options == 3)
+				HandleHIDRegion(gui.menu.selected);
+			else
+				HandleHIDOptions(gui.menu.selected);
 		}	
 		
 	}
 	runThread = false;
 	fsExit();
 	threadJoin(thread, U64_MAX);
+	svcClearEvent(event);
 	free(data);
 	free(data2);
 	return 0;

@@ -9,6 +9,8 @@ void guithread(void * arg)
 	gui.font = sftd_load_font_mem(font_ttf, font_ttf_size);
 	while(runThread)
 	{	
+		svcWaitSynchronization(event, U64_MAX);
+      //svcClearEvent(event);
 		sf2d_start_frame(GFX_TOP, GFX_LEFT);
 		gui.topFunc();
 		sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);

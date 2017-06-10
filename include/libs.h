@@ -23,7 +23,8 @@
 #include "crc.h"
 #include "fs.h"
 #include "guithread.h"
-
+Thread thread;
+Handle event;
 Result ret;
 char *data, *data2, *file;
 typedef struct
@@ -41,6 +42,6 @@ typedef struct
 	sftd_font *font;
 	Menu menu;
 }Gui;
-
+bool stopScreen;
 Gui gui;
 #endif

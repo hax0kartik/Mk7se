@@ -19,48 +19,12 @@ uint32_t crc32_calc(uint8_t *ptr, int cnt, uint32_t crc)
 }
 void cal_save(char* j)
 {
-	
-   FILE *fp;
-  
-   char * buffer;
-
-   int len;
 	uint32_t v32 = ~0;
-	FILE *f;
-
-		f = fopen(j, "rb+");
-		
-		len = fread(msg, 1, BUFFER, f);
-		
-		if (ferror(f)) {
-			puts("error");
-			
-		}
-		v32 = crc32_calc(msg, len, v32);
-	
-
-	fclose(f);
-	char str[10];
-	char hexed[4];
-	uint32_t swapped =swap_uint32(~v32);
-    snprintf(str, sizeof str, "%08lX", (unsigned long)swapped); 
-            
-          char a=hexToAscii(str[0],str[1]);      
-
-		  hexed[0]=a;
-		   int z=1;
-		   for(int i=2;i<=7;i++)
-			{
-				char b=hexToAscii(str[i],str[i+1]);
-				i++;
-				hexed[z++]=b;	
-			}
-	hexed[4]='\0';
-   
-   fp = fopen(j,"rb+");
-   fseek(fp,20688,1);
-   fwrite(hexed, 1, 4, fp);
-   fflush(fp);
-   
-   fclose(fp);
+	uint8_t new[4];
+	v32 = crc32_calc((u8*)j,20688, v32);
+	splitByte(new,v32);
+	j[BUFFER] = new[0];
+	j[BUFFER+1] = new[1];
+	j[BUFFER+2] = new[2];
+	j[BUFFER+3] = new[3];
 }
