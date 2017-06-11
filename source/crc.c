@@ -1,30 +1,30 @@
 #include "libs.h"
-const uint32_t crc32_tbl[] = {
+unsigned int crc32b(unsigned char *message) {
+   int i, j;
+   unsigned int byte, crc, mask;
 
-0x00000000, 0x1db71064, 0x3b6e20c8, 0x26d930ac,
-0x76dc4190, 0x6b6b51f4, 0x4db26158, 0x5005713c,
-0xedb88320, 0xf00f9344, 0xd6d6a3e8, 0xcb61b38c,
-0x9b64c2b0, 0x86d3d2d4, 0xa00ae278, 0xbdbdf21c
-
-
-};
-/* the idea is to act on nybbles instead of bytes to require less CPU cache */
-uint32_t crc32_calc(uint8_t *ptr, int cnt, uint32_t crc)
-{
-	while (cnt--) {
-		crc = (crc >> 4) ^ crc32_tbl[(crc & 0xf) ^ (*ptr & 0xf)];
-		crc = (crc >> 4) ^ crc32_tbl[(crc & 0xf) ^ (*(ptr++) >> 4)];
-	}
-	return crc;
+   i = 0;
+   crc = 0xFFFFFFFF;
+   while (i!= 20688) {
+      byte = message[i];            // Get next byte.
+      crc = crc ^ byte;
+      for (j = 7; j >= 0; j--) {    // Do eight times.
+         mask = -(crc & 1);
+         crc = (crc >> 1) ^ (0xEDB88320 & mask);
+      }
+      i = i + 1;
+   }
+   return ~crc;
 }
-void cal_save(char* j)
+
+void cal_save(char* buf)
 {
-	uint32_t v32 = ~0;
-	uint8_t new[4];
-	v32 = crc32_calc((u8*)j,20688, v32);
+	unsigned int v32 = 0;
+	u8 *new = malloc(sizeof(u8*)*2); 
+	v32 = crc32b(buf);
 	splitByte(new,v32);
-	j[BUFFER] = new[0];
-	j[BUFFER+1] = new[1];
-	j[BUFFER+2] = new[2];
-	j[BUFFER+3] = new[3];
+	buf[BUFFER] = new[0];
+	buf[BUFFER+1] = new[1];
+	buf[BUFFER+2] = new[2];
+	buf[BUFFER+3] = new[3];
 }

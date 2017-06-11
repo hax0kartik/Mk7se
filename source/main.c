@@ -58,6 +58,7 @@ void botFail(void)
 	
 }
 ////////////////////////////////////////////////////
+int a;
 void HandleHIDRegion(int selected)
 {
 	switch(selected)
@@ -75,7 +76,7 @@ void HandleHIDRegion(int selected)
 	gui.topFunc = topWait;
 	gui.botFunc = botWait;
 	file = malloc(0x40);
-	for(int a=0; a<=8; a++){	
+	for(a = 0; a<=8; a++){	
 		sprintf(file, "/system%d.dat", a);
 		ret = save_import(data, titleid, file);
 		if (ret == 0){
@@ -97,7 +98,6 @@ void HandleHIDRegion(int selected)
 		gui.topFunc = topreg;
 		gui.botFunc = botreg2;
 	}
-	free(file);
 }
 ////////////////////////////////////////////////////////
 char mybuf[100];
@@ -227,7 +227,13 @@ int main()
 	while (aptMainLoop()) {
 		gspWaitForVBlank();
 		hidScanInput();
-		if (hidKeysDown() & KEY_START)	break;
+		if (hidKeysDown() & KEY_START){
+			ret = save_export(data, titleid, file);
+			gui.botFunc = topFail;
+			sprintf(file,"/system%d.dat",a);
+			save_export(data2, titleid, file);
+			break;
+		}
 		if (hidKeysDown() & KEY_DDOWN)
 		{
 			gui.menu.selected++;
@@ -259,5 +265,6 @@ int main()
 	svcClearEvent(event);
 	free(data);
 	free(data2);
+	free(file);
 	return 0;
-}
+}
