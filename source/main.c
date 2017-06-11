@@ -121,7 +121,8 @@ void HandleHIDOptions(int selected)
 {
 	unsigned int opt = 0;
 	SwkbdState swkbd;
-	
+	u8 * non = malloc(sizeof(u8*)*2);
+	memset(non, '\0', 4);
 	switch(selected)
 	{
 		case 0:
@@ -138,8 +139,12 @@ void HandleHIDOptions(int selected)
 		svcCreateEvent(&event,RESET_STICKY);
 		opt = openSwkdb(&swkbd,"Enter no of wins");
 		svcSignalEvent(event);
-		patchByte(data,opt,WIN);
-		patchByte(data2,opt,WIN);
+		splitByte(non,(unsigned long)opt);
+		for(int i = 0; non[i] != '\0'; i++)
+		{
+			data[WIN + i] = non[i];
+			data2[WIN + i] = non[i];
+		}
 		strcpy(message, "Number of wins changed!");
 		gui.botFunc = botDisplay;
 		break;
@@ -148,8 +153,12 @@ void HandleHIDOptions(int selected)
 		svcCreateEvent(&event,RESET_STICKY);
 		opt = openSwkdb(&swkbd,"Enter no of Losses");
 		svcSignalEvent(event);
-		patchByte(data,opt,LOSE);
-		patchByte(data2,opt,LOSE);
+		splitByte(non,(unsigned long)opt);
+		for(int i = 0; non[i] != '\0'; i++)
+		{
+			data[LOSE + i] = non[i];
+			data2[LOSE + i] = non[i];
+		}
 		strcpy(message, "Number of losses changed!");
 		gui.botFunc = botDisplay;
 		break;
