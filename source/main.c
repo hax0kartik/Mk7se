@@ -93,9 +93,10 @@ void HandleHIDRegion(int selected)
 	
 	else
 	{
-		save_backup(data,file);
-		sprintf(file,"/system%d.dat",a);
-		save_backup(data2, file);
+		char *backup = file;
+		save_backup(data,backup);
+		sprintf(backup,"/system%d.dat",a);
+		save_backup(data2, backup);
 		gui.menu.selected = 0;
 		gui.menu.options = 9;
 		gui.topFunc = topreg;
@@ -104,26 +105,12 @@ void HandleHIDRegion(int selected)
 }
 ////////////////////////////////////////////////////////
 char mybuf[100];
-
-static SwkbdCallbackResult MyCallback(void* user, const char** ppMessage, const char* text, size_t textlen)
-{
-	if (strcmp(text, "0")== 0)
-	{
-		*ppMessage = "Entering 0 doesn't work right now, enter some other number.";
-		return SWKBD_CALLBACK_CONTINUE;
-	}
-
-	return SWKBD_CALLBACK_OK;
-}
-
 unsigned int openSwkdb(SwkbdState *swkbd,char *texgen)
 {
-	SwkbdButton button = SWKBD_BUTTON_NONE;
 	//gui.topFunc = topFail;
 	
 	swkbdInit(swkbd, SWKBD_TYPE_NUMPAD, 2, -1);
 	//gui.topFunc = topFail;
-	swkbdSetFilterCallback(swkbd, MyCallback, NULL);
 	button = swkbdInputText(swkbd, mybuf, sizeof(mybuf));
 	int w=atoi(mybuf);
 	return w;
@@ -155,12 +142,8 @@ void HandleHIDOptions(int selected)
 		svcCreateEvent(&event,RESET_STICKY);
 		opt = openSwkdb(&swkbd,"Enter no of wins");
 		svcSignalEvent(event);
-		splitByte(non,(unsigned long)opt);
-		for(int i = 0; non[i] != '\0'; i++)
-		{
-			data[WIN + i] = non[i];
-			data2[WIN + i] = non[i];
-		}
+		patchByte(data,opt,WIN);
+		patchByte(data2,opt,WIN);
 		strcpy(message, "Number of wins changed!");
 		gui.botFunc = botDisplay;
 		break;
@@ -169,12 +152,8 @@ void HandleHIDOptions(int selected)
 		svcCreateEvent(&event,RESET_STICKY);
 		opt = openSwkdb(&swkbd,"Enter no of Losses");
 		svcSignalEvent(event);
-		splitByte(non,(unsigned long)opt);
-		for(int i = 0; non[i] != '\0'; i++)
-		{
-			data[LOSE + i] = non[i];
-			data2[LOSE + i] = non[i];
-		}
+		patchByte(data,opt,LOSE);
+		patchByte(data2,opt,LOSE);
 		strcpy(message, "Number of losses changed!");
 		gui.botFunc = botDisplay;
 		break;
@@ -251,13 +230,10 @@ int main()
 		gspWaitForVBlank();
 		hidScanInput();
 		if (hidKeysDown() & KEY_START){
-			if(ret == 0)
-			{
 				ret = save_export(data, titleid, file);
 				sprintf(file,"/system%d.dat",a);
 				save_export(data2, titleid, file);
-			}
-			break;
+				break;
 		}
 		if (hidKeysDown() & KEY_SELECT){
 			break;
