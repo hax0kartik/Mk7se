@@ -1,16 +1,17 @@
 #include "libs.h"
 char message[40];
+Result ret = 1;
 char *menu2[] = {"Europe","America","Japan"};
-char *opt_menu[]= {"Edit no of coins","Edit no of wins","Edit no of lose","Edit VR","Unlock all tracks","Unlock all chars",
+char *opt_menu[]= {"Edit no of coins","Edit no of wins","Edit no of lose","Edit VR","Unlock all tracks","Unlock all characters",
 	"Unlock all Karts","Unlock all tires","Unlock all gliders"};
 /////////////////////////////////////////////////////
 void botreg(void){
-	sftd_draw_textf(gui.font, 10, 10, RGBA8(0xf9,0xf9,0xf9,255), 20, "%s", "Please select your game's region...");
+	sftd_draw_textf(gui.font, 10, 10, RGBA8(0xf9,0xf9,0xf9,255), 20, "%s", "Please select your game's \nregion...");
 }
 void botreg2(void){
 	sftd_draw_textf(gui.font, 10, 10, RGBA8(0xf9,0xf9,0xf9,255), 20, "%s", "Please select an option...");
-	sftd_draw_textf(gui.font, 10, 40, RGBA8(0xf9,0xf9,0xf9,255), 20, "%s", "Please start to save and Exit.");
-	sftd_draw_textf(gui.font, 10, 70, RGBA8(0xf9,0xf9,0xf9,255), 20, "%s", "Please select to Exit without saving.");
+	sftd_draw_textf(gui.font, 10, 40, RGBA8(0xf9,0xf9,0xf9,255), 20, "%s", "Press start to save and Exit.");
+	sftd_draw_textf(gui.font, 10, 70, RGBA8(0xf9,0xf9,0xf9,255), 20, "%s", "Press select to Exit without\nsaving.");
 	
 }
 void topreg(void){
@@ -40,11 +41,11 @@ void topreg(void){
 ////////////////////////////////////////////////////
 void topWait(void)
 {
-	sftd_draw_textf(gui.font, 10, 105 , RGBA8(0xf9,0xf9,0xf9,255), 15, "%s","Please wait while your saves are being imported...");
+	sftd_draw_textf(gui.font, 10,120, RGBA8(0xf9,0xf9,0xf9,255), 15, "%s","Please wait while your saves are being imported...");
 }
 void botWait(void)
 {
-	sftd_draw_textf(gui.font, 140, 90 , RGBA8(0xf9,0xf9,0xf9,255), 30, "%s","...");
+	sftd_draw_textf(gui.font, 10,105, RGBA8(0xf9,0xf9,0xf9,255), 30, "%s","...");
 }
 u64 titleid = 0x0000000000000000;
 //////////////////////////////////////////////////
@@ -54,7 +55,7 @@ void topFail(void)
 }
 void botFail(void)
 {
-	sftd_draw_textf(gui.font,120, 90, RGBA8(0xf4,0x46,0x47,250),15,"%s","Press Start to Exit");
+	sftd_draw_textf(gui.font,(320-(3*17))/2,112, RGBA8(0xf4,0x46,0x47,250),15,"%s","Press Start to Exit");
 	
 }
 ////////////////////////////////////////////////////
@@ -101,6 +102,18 @@ void HandleHIDRegion(int selected)
 }
 ////////////////////////////////////////////////////////
 char mybuf[100];
+
+static SwkbdCallbackResult MyCallback(void* user, const char** ppMessage, const char* text, size_t textlen)
+{
+	if (strcmp(text, "0")== 0)
+	{
+		*ppMessage = "Entering 0 doesn't work right now, enter some other number.";
+		return SWKBD_CALLBACK_CONTINUE;
+	}
+
+	return SWKBD_CALLBACK_OK;
+}
+
 unsigned int openSwkdb(SwkbdState *swkbd,char *texgen)
 {
 	SwkbdButton button = SWKBD_BUTTON_NONE;
@@ -108,13 +121,14 @@ unsigned int openSwkdb(SwkbdState *swkbd,char *texgen)
 	
 	swkbdInit(swkbd, SWKBD_TYPE_NUMPAD, 2, -1);
 	//gui.topFunc = topFail;
+	swkbdSetFilterCallback(swkbd, MyCallback, NULL);
 	button = swkbdInputText(swkbd, mybuf, sizeof(mybuf));
 	int w=atoi(mybuf);
 	return w;
 }
 void botDisplay(void)
 {
-	sftd_draw_textf(gui.font, 10, 10, RGBA8(0xf9,0xf9,0xf9,255), 20, "%s", message);
+	sftd_draw_textf(gui.font,(320-(strlen(message)*11))/2, 110, RGBA8(0xf9,0xf9,0xf9,255), 20, "%s", message);
 }
 //////////////////////////////////////////////////////////
 void HandleHIDOptions(int selected)
@@ -218,8 +232,6 @@ void HandleHIDOptions(int selected)
 	}
 	cal_save(data);
 	cal_save(data2);
-	//patchByte(data, crc, 20688);
-	//patchByte(data2, crc2, 20688);
 }
 //////////////////////////////////////////////////
 int main()
@@ -237,10 +249,15 @@ int main()
 		gspWaitForVBlank();
 		hidScanInput();
 		if (hidKeysDown() & KEY_START){
-			ret = save_export(data, titleid, file);
-			gui.botFunc = topFail;
-			sprintf(file,"/system%d.dat",a);
-			save_export(data2, titleid, file);
+			if(ret == 0)
+			{
+				ret = save_export(data, titleid, file);
+				sprintf(file,"/system%d.dat",a);
+				save_export(data2, titleid, file);
+			}
+			break;
+		}
+		if (hidKeysDown() & KEY_SELECT){
 			break;
 		}
 		if (hidKeysDown() & KEY_DDOWN)
@@ -271,6 +288,7 @@ int main()
 	runThread = false;
 	fsExit();
 	threadJoin(thread, U64_MAX);
+	if(event!=NULL)
 	svcClearEvent(event);
 	free(data);
 	free(data2);
