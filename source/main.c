@@ -12,7 +12,6 @@ void botreg2(void){
 	sftd_draw_textf(gui.font, 10, 10, RGBA8(0xf9,0xf9,0xf9,255), 20, "%s", "Please select an option...");
 	sftd_draw_textf(gui.font, 10, 40, RGBA8(0xf9,0xf9,0xf9,255), 20, "%s", "Press start to save and Exit.");
 	sftd_draw_textf(gui.font, 10, 70, RGBA8(0xf9,0xf9,0xf9,255), 20, "%s", "Press select to Exit without\nsaving.");
-	
 }
 void topreg(void){
 	for(int i=0; i!=gui.menu.options; i++){
