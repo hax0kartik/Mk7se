@@ -112,6 +112,7 @@ unsigned int openSwkdb(SwkbdState *swkbd,char *texgen)
 	swkbdInit(swkbd, SWKBD_TYPE_NUMPAD, 2, -1);
 	//gui.topFunc = topFail;
 	swkbdInputText(swkbd, mybuf, sizeof(mybuf));
+	swkbdInputText(swkbd, mybuf, sizeof(mybuf));
 	int w=atoi(mybuf);
 	return w;
 }
