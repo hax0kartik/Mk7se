@@ -57,11 +57,14 @@ Result save_export(char *data, u64 id, char *loc){
 	return 0;
 }
 
-/*
-Result save_export(char *data, u64 id, char *loc)
+Result save_backup(char *data, char *loc)
 {
-	FILE *f = fopen(loc,"wb+");
+	char save[40];
+	mkdir("/mk7se",0777);
+	mkdir("/mk7se/backup",0777);
+	sprintf(save,"/mk7se/backup%s",loc);
+	FILE *f = fopen(save,"wb+");
 	fwrite(data,20692,1,f);
 	fclose(f);
-	return ;
-}*/
+	return 0;
+}

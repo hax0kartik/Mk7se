@@ -25,7 +25,6 @@
 #include "guithread.h"
 Thread thread;
 Handle event;
-Result ret;
 char *data, *data2, *file;
 typedef struct
 {
