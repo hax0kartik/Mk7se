@@ -6,7 +6,7 @@ void guithread(void * arg)
 	sf2d_set_clear_color(RGBA8(0x00,0xB5, 0xB5, 0xFF));
 	sf2d_set_vblank_wait(0);
 	sftd_init();
-	gui.font = sftd_load_font_mem(font_ttf, font_ttf_size);
+	gui.font = sftd_load_font_mem(font_bin, font_bin_len);
 	while(runThread)
 	{	
 		svcWaitSynchronization(event, U64_MAX);

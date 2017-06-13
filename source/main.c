@@ -93,7 +93,8 @@ void HandleHIDRegion(int selected)
 	
 	else
 	{
-		char *backup = file;
+		char backup[40]; 
+		strcpy(backup,file);
 		save_backup(data,backup);
 		sprintf(backup,"/system%d.dat",a);
 		save_backup(data2, backup);
@@ -108,10 +109,8 @@ char mybuf[100];
 unsigned int openSwkdb(SwkbdState *swkbd,char *texgen)
 {
 	//gui.topFunc = topFail;
-	
 	swkbdInit(swkbd, SWKBD_TYPE_NUMPAD, 2, -1);
 	//gui.topFunc = topFail;
-	swkbdInputText(swkbd, mybuf, sizeof(mybuf));
 	swkbdInputText(swkbd, mybuf, sizeof(mybuf));
 	int w=atoi(mybuf);
 	return w;
@@ -124,7 +123,7 @@ void botDisplay(void)
 void HandleHIDOptions(int selected)
 {
 	unsigned int opt = 0;
-	SwkbdState swkbd;
+	static SwkbdState swkbd;
 	u8 * non = malloc(sizeof(u8*)*2);
 	memset(non, '\0', 4);
 	switch(selected)
@@ -233,7 +232,8 @@ int main()
 		if (hidKeysDown() & KEY_START){
 				ret = save_export(data, titleid, file);
 				sprintf(file,"/system%d.dat",a);
-				save_export(data2, titleid, file);
+				ret = save_export(data2, titleid, file);
+				gui.botFunc = topFail;
 				break;
 		}
 		if (hidKeysDown() & KEY_SELECT){

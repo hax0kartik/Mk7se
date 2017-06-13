@@ -9,7 +9,7 @@
 #include <stddef.h>
 #include <sf2d.h>
 #include <sftd.h>
-#include <font_ttf.h>
+#include "font_bin.h"
 #include <unistd.h>
 #include <sys/stat.h>
 #include <sys/types.h>
